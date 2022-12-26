@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>login ejs</title>
+  </head>
+  <body>
+    <div>
+      <div>
+        使用者:
+        <input type="text" id="username" />
+      </div>
+      <div>
+        密碼:
+        <input type="password" id="password" />
+      </div>
+
+      <div>
+        <button id="loginPost">登入 - POST</button>
+      </div>
+    </div>
+
+    <script>
+      const usernameEl = document.querySelector('#username');
+      const passwordEl = document.querySelector('#password');
+      const loginPostEl = document.querySelector('#loginPost');
+
+      loginPostEl.onclick = () => {
+        const username = usernameEl.value;
+        const password = passwordEl.value;
+        // post 請求
+        // fetch(`/user`, {
+        //   method: 'POST',
+        //   body: JSON.stringify({
+        //     username,
+        //     password,
+        //   }),
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        // })
+        //   .then((res) => res.json())
+        //   .then((res) => console.log(res));
+        fetch(`/user/login`, {
+          method: 'POST',
+          body: `username=${username}&password=${password}`,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            if (res.ok === 1) {
+              location.href = '/home';
+            } else {
+              alert('帳號或密碼錯誤');
+            }
+          });
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+    <script>
+      // Add a request interceptor
+      axios.interceptors.request.use(
+        function (config) {
+          // Do something before request is sent
+          const token = localStorage.getItem('token');
+          config.headers.Authorization = `Bearer ${token}`;
+          return config;
+        },
+        function (error) {
+          // Do something with request error
+          return Promise.reject(error);
+        }
+      );
+
+      // Add a response interceptor
+      axios.interceptors.response.use(
+        function (response) {
+          // Any status code that lie within the range of 2xx cause this function to trigger
+          // Do something with response data
+          const { authorization } = response.headers;
+          authorization && localStorage.setItem('token', authorization);
+          return response;
+        },
+        function (error) {
+          // Any status codes that falls outside the range of 2xx cause this function to trigger
+          // Do something with response error
+          if (error.response.status === 401) {
+            localStorage.removeItem('token');
+            location.href = '/login';
+          }
+          return Promise.reject(error);
+        }
+      );
+    </script>
+  </head>
+  <body>
+    <h1>
+      Koa admin system
+      <button id="exit">logout</button>
+    </h1>
+
+    <hr />
+
+    <table border="1">
+      <thead>
+        <tr>
+          <td>id</td>
+          <td>使用者名稱</td>
+          <td>年齡</td>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      const exitBtn = document.querySelector('#exit');
+
+      // get list
+      axios.get('/home/list').then((res) => {
+        res = res.data;
+        console.log(res);
+        const tbody = document.querySelector('tbody');
+        tbody.innerHTML = res
+          .map(
+            (item) => `
+            <tr>
+              <td>${item._id}</td>
+              <td>${item.username}</td>
+              <td>${item.age}</td>
+            </tr>
+          `
+          )
+          .join('');
+      });
+
+      exitBtn.onclick = () => {
+        localStorage.removeItem('token');
+        location.href = '/login';
+      };
+    </script>
+  </body>
+</html>

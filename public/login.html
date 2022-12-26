@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>login</title>
+  </head>
+  <body>
+    <div>
+      <div>
+        使用者:
+        <input type="text" id="username" />
+      </div>
+      <div>
+        密碼:
+        <input type="password" id="password" />
+      </div>
+
+      <div>
+        <button id="login">登入 - GET</button>
+        <button id="loginPost">登入 - POST</button>
+      </div>
+    </div>
+
+    <script>
+      const usernameEl = document.querySelector('#username');
+      const passwordEl = document.querySelector('#password');
+      const loginEl = document.querySelector('#login');
+      const loginPostEl = document.querySelector('#loginPost');
+
+      loginEl.onclick = () => {
+        // console.log(usernameEl.value, passwordEl.value);
+        const username = usernameEl.value;
+        const password = passwordEl.value;
+        // get 請求
+        fetch(`/user?username=${username}&password=${password}`)
+          .then((res) => res.json())
+          .then((res) => console.log(res));
+      };
+
+      loginPostEl.onclick = () => {
+        const username = usernameEl.value;
+        const password = passwordEl.value;
+        // post 請求
+        // fetch(`/user`, {
+        //   method: 'POST',
+        //   body: JSON.stringify({
+        //     username,
+        //     password,
+        //   }),
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        // })
+        //   .then((res) => res.json())
+        //   .then((res) => console.log(res));
+        fetch(`/user`, {
+          method: 'POST',
+          body: `username=${username.value}&password=${password.value}`,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        })
+          .then((res) => res.json())
+          .then((res) => console.log(res));
+      };
+    </script>
+  </body>
+</html>
